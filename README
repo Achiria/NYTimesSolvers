@@ -1,0 +1,3 @@
+The words_dictionary.json file needs to be in the same directory as the solver.py file, or the solver needs to be edited to point to the file correctly.
+The solvers are completely dependent on the words in the dictionary file. The one provided has many words which are not considere valid by the New York Times, including acronyms.
+The Letter Boxed solver seems to work but has a bug where validSolutions will have extra, invalid solutions that have nested lists inside.
