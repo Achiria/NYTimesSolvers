@@ -43,7 +43,7 @@ if __name__ == '__main__':
     words = json.load(file)
     
     letters = ''
-    letterGroups = [["e","t","c"],["a","u","f"],["l","i","r"],["y","m","s"]] 
+    letterGroups = [["i","k","a"],["c","h","w"],["e","p","o"],["d","r","n"]] 
     for i in letterGroups:
         letters = letters + ''.join(str(v) for v in i)  
        
@@ -88,8 +88,8 @@ if __name__ == '__main__':
         # print(possibleSolution)
     
     # TODO validSolutions are normal are correct at this point
-    print("All valid solutions: " + str(validSolutions))
-            
+    #print("All valid solutions: " + str(validSolutions))
+    
     longestSolutionLength = 0
     longestSolution = []
     biggestSolutionSize = 0
@@ -104,31 +104,37 @@ if __name__ == '__main__':
         if solutionLength >= longestSolutionLength:
             if solutionLength > longestSolutionLength:
                 longestSolutionLength = solutionLength
-                longestSolution = possibleSolution
-            else: 
-                longestSolution.append(possibleSolution)
+                longestSolution = []
+            longestSolution.append(possibleSolution)
         if solutionSize >= biggestSolutionSize:
             if solutionSize > biggestSolutionSize:
                 biggestSolutionSize = solutionSize
-                biggestSolution = possibleSolution
-            else: 
-                biggestSolution.append(possibleSolution)
-        if solutionLength == len(letters):
-            completeSolutions.append(possibleSolution)
-            if len(possibleSolution) > 3:
-                perfectSolutions.append(possibleSolution)
+                biggestSolution = []
+            biggestSolution.append(possibleSolution)
+        # usedLetters = []
+        # for word in possibleSolution:
+            # for letter in word:
+                # usedLetters.append(letter)
+        # allLetters = True
+        # for letter in letters:
+            # if letter not in usedLetters:
+                # allLetters = False
+        # if allLetters:
+            # completeSolutions.append(possibleSolution)
+        if solutionLength == len(letters) + solutionSize - 1:
+            perfectSolutions.append(possibleSolution)
                 
        
     
-    # print("Biggest solution found: " + str(biggestSolution))    
-    # print("Longest solution found: " + str(longestSolution))    
-    # print(str(len(completeSolutions)) + " complete solutions found.")
-    # print("Complete solutions: " + str(completeSolutions))
-    # print(str(len(perfectSolutions)) + " perfect solutions found.")
-    # print("Perfect solutions: " + str(perfectSolutions))
+    print("Biggest solution found: " + str(biggestSolution))    
+    print("Longest solution found: " + str(longestSolution))    
+    print(str(len(completeSolutions)) + " complete solutions found.")
+    print("Complete solutions: " + str(completeSolutions))
+    print(str(len(perfectSolutions)) + " perfect solutions found.")
+    print("Perfect solutions: " + str(perfectSolutions))
     
     # TODO validSolutions are not normal and have nested lists
-    print("All valid solutions: " + str(validSolutions))
+    #print("All valid solutions: " + str(validSolutions))
             
             
             
