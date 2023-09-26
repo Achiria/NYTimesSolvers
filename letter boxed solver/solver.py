@@ -2,11 +2,7 @@ import json
 from pdb import set_trace as bp
 
 letterGroups = [["a","x","n"],["o","h","l"],["i","m","e"],["p","y","t"]] 
-totalLetters = 12
 perfectLength = 6
-
-
-finalSolutions = []
 
 def getGroup(iterable, toGet):
     for i in range(len(iterable)):
@@ -19,7 +15,7 @@ def checkWord(word, checkLetters, letterGroups):
         if letter in checkLetters:
             if word.count(letter) > 1:
                 return False
-            if word.index(letter) != len(word)-1:
+            if letter != word[-1]:
                 lGroup = getGroup(letterGroups, letter)
                 lNGroup = getGroup(letterGroups, word[word.index(letter)+1])
                 if lGroup == lNGroup:
@@ -47,7 +43,7 @@ def checkNextWord(solution, nextWord):
         return True
     return False   
     
-def recursiveCall(solution, wordSet):
+def getNextWords(solution, wordSet):
     hasValidNextWord = False
     for nextWord in wordSet:
         if checkNextWord(solution, nextWord):
@@ -56,15 +52,16 @@ def recursiveCall(solution, wordSet):
             newSolution.extend(solution)
             newSolution.append(nextWord)
             
-            recursiveCall(newSolution, wordSet)
+            getNextWords(newSolution, wordSet)
     if not hasValidNextWord:
         finalSolutions.append(solution)
         
 def getSolutions(wordSet):
     for word in wordSet:
-        recursiveCall([word], wordSet)
-    return
- 
+        getNextWords([word], wordSet)
+    return 
+
+finalSolutions = []
         
 if __name__ == '__main__':
     file = open("../words_dictionary.json", "r")
