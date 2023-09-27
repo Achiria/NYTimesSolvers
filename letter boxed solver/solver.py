@@ -1,8 +1,23 @@
 import json
+import copy
 from pdb import set_trace as bp
 
-letterGroups = [["a","x","n"],["o","h","l"],["i","m","e"],["p","y","t"]] 
-perfectLength = 6
+letterGroups = [["n","g","l"],["i","o","u"],["a","c","e"],["m","j","t"]] 
+
+NUM_LETTERS = 12
+
+def sortByWordLength(words):
+    sortedWords = sorted(words, key=len)
+    sortedWords.reverse()
+    return sortedWords
+
+def getUsedLetters(words):
+    usedLetters = []
+    for word in words:
+        for letter in word:
+            if letter not in usedLetters:
+                usedLetters.append(letter)
+    return usedLetters
 
 def getGroup(letterGroups, letterToGet):
     for i in range(len(letterGroups)):
@@ -21,11 +36,9 @@ def checkWord(word, checkLetters, letterGroups):
         else:
             return False
     return True
-    
+
 def checkNextWord(solution, nextWord):
-    usedLetters = []
-    for word in solution:
-        usedLetters.extend(word)
+    usedLetters = getUsedLetters(solution)
     if solution[-1][-1] == nextWord[0]:
         for letter in nextWord[1:]:
             if letter in usedLetters:
@@ -33,24 +46,51 @@ def checkNextWord(solution, nextWord):
         return True
     return False   
     
-def getNextWords(solution, wordSet):
-    hasValidNextWord = False
-    for nextWord in wordSet:
-        if checkNextWord(solution, nextWord):
-            hasValidNextWord = True
-            newSolution = []
-            newSolution.extend(solution)
-            newSolution.append(nextWord)
-            
-            getNextWords(newSolution, wordSet)
-    if not hasValidNextWord:
-        finalSolutions.append(solution)
-        
-def getSolutions(wordSet):
-    for word in wordSet:
-        getNextWords([word], wordSet)
-    return 
+def checkNextWordWithRepeats(solution, nextWord):
+    if nextWord in solution:
+        return False
+    if solution[-1][-1] == nextWord[0]:
+        return True
+    return False   
 
+        
+def getNextWords(solution, wordSet, maxDepth):
+    if len(solution) <= maxDepth:
+        usedLetters = getUsedLetters(solution)
+        if len(usedLetters) < NUM_LETTERS:
+            hasValidNextWord = False
+            for nextWord in wordSet:
+                # if checkNextWord(solution, nextWord):
+                if checkNextWordWithRepeats(solution, nextWord):
+                    hasValidNextWord = True
+                    newSolution = copy.deepcopy(solution)
+                    newSolution.append(nextWord)
+                    
+                    getNextWords(newSolution, wordSet, maxDepth)
+            if not hasValidNextWord:
+                finalSolutions.append(solution)
+        else:
+            finalSolutions.append(solution)
+        
+def getEverySolution(wordSet, letters):
+    maxDepth = 1
+    haveCompleteSolution = False
+    while not haveCompleteSolution:
+        for word in wordSet:
+            getNextWords([word], wordSet, maxDepth)
+        for solution in finalSolutions:
+            if checkCompleteness(solution, letters):
+                haveCompleteSolution = True
+        maxDepth += 1
+    return  
+
+def checkCompleteness(solution, letters):
+    usedLetters = getUsedLetters(solution)
+    for letter in letters:
+        if letter not in usedLetters:
+            return False
+    return True      
+        
 finalSolutions = []
         
 if __name__ == '__main__':
@@ -67,35 +107,30 @@ if __name__ == '__main__':
             valid = checkWord(word, letters, letterGroups)
             if valid:
                 wordSet.append(word)
-                
-    getSolutions(wordSet)
-
+           
+    # wordSet = sortByWordLength(wordSet)
+    # print(wordSet)
+    getEverySolution(wordSet, letters)
+    
+    shortestSolution = []
+    shortestSolutionLength = 99999
     completeSolutions = []
-    perfectSolutions = []
-    usedLetters = []
-    for possibleSolution in finalSolutions:
-        isComplete = True
+    for solution in finalSolutions:
         solutionLength = 0
-        solutionSize = len(possibleSolution)
-        for word in possibleSolution:
+        usedLetters = getUsedLetters(solution)
+        for word in solution:
             solutionLength += len(word)
             usedLetters.extend(word)
-        for letter in usedLetters:
-            if letter not in letters:
-                isComplete = False
-        for letter in letters:
-            if letter not in usedLetters:
-                isComplete = False
-        if isComplete:
-            completeSolutions.append(possibleSolution)
-        if solutionSize == perfectLength:
-            perfectSolutions.append(possibleSolution)
+        if checkCompleteness(solution, letters):
+            completeSolutions.append(solution)
+            if solutionLength < shortestSolutionLength:
+                shortestSolutionLength = solutionLength
+                shortestSolution = [solution]
          
     print(str(len(finalSolutions)) + " solutions found.")
     print("Solutions: " + str(finalSolutions))
     print(str(len(completeSolutions)) + " complete solutions found.")
     print("Complete solutions: " + str(completeSolutions))
-    print(str(len(perfectSolutions)) + " perfect solutions found.")
-    print("Perfect solutions: " + str(perfectSolutions))
+    print("Shortest solution: " + str(shortestSolution))
     
 
