@@ -4,32 +4,22 @@ from pdb import set_trace as bp
 letterGroups = [["a","x","n"],["o","h","l"],["i","m","e"],["p","y","t"]] 
 perfectLength = 6
 
-def getGroup(iterable, toGet):
-    for i in range(len(iterable)):
-        for j in iterable[i]:
-            if j == toGet:
+def getGroup(letterGroups, letterToGet):
+    for i in range(len(letterGroups)):
+        for j in letterGroups[i]:
+            if j == letterToGet:
                 return i
             
 def checkWord(word, checkLetters, letterGroups):
-    for letter in word:
-        if letter in checkLetters:
-            if word.count(letter) > 1:
+    for il in range(len(word)):
+        if word[il] in checkLetters:
+            if il < len(word) - 1:
+                lGroup = getGroup(letterGroups, word[il])
+                lNGroup = getGroup(letterGroups, word[il+1])
+            if lGroup == lNGroup:
                 return False
-            if letter != word[-1]:
-                lGroup = getGroup(letterGroups, letter)
-                lNGroup = getGroup(letterGroups, word[word.index(letter)+1])
-                if lGroup == lNGroup:
-                    return False
         else:
             return False
-    return True
-    
-def checkLetters(perm, wordIndex):
-    for oneLetter in perm[wordIndex]:
-        if wordIndex+1 < len(perm):
-            for twoLetter in perm[wordIndex+1]:
-                if twoLetter == oneLetter:
-                    return False
     return True
     
 def checkNextWord(solution, nextWord):
@@ -82,16 +72,27 @@ if __name__ == '__main__':
 
     completeSolutions = []
     perfectSolutions = []
+    usedLetters = []
     for possibleSolution in finalSolutions:
+        isComplete = True
         solutionLength = 0
         solutionSize = len(possibleSolution)
         for word in possibleSolution:
             solutionLength += len(word)
-        if solutionLength == len(letters) + solutionSize - 1:
+            usedLetters.extend(word)
+        for letter in usedLetters:
+            if letter not in letters:
+                isComplete = False
+        for letter in letters:
+            if letter not in usedLetters:
+                isComplete = False
+        if isComplete:
             completeSolutions.append(possibleSolution)
         if solutionSize == perfectLength:
             perfectSolutions.append(possibleSolution)
          
+    print(str(len(finalSolutions)) + " solutions found.")
+    print("Solutions: " + str(finalSolutions))
     print(str(len(completeSolutions)) + " complete solutions found.")
     print("Complete solutions: " + str(completeSolutions))
     print(str(len(perfectSolutions)) + " perfect solutions found.")
